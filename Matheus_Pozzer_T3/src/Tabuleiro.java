@@ -43,17 +43,24 @@ public class Tabuleiro {
 
     private boolean solve(int[][] tabuleiro, int col, int numeroPorquinhos, int numeroGalinhas, List<String> solutions,
             String animalType) {
+        boolean isAnimalEmpty = true;
+        int numeroChecador = 0 ;
         if (numeroGalinhas == 0 && numeroPorquinhos == 0) {
             solutions.add(printSolution(tabuleiro));
             return true;
         }
-        int numeroChecador = 0 ;
-        if( animalType.equals("Galinha") ){
+        if( animalType.equals("Galinha") && numeroGalinhas > 0){
             numeroChecador = 2;
+            isAnimalEmpty = false;
+        }
+        if( animalType.equals("Porco") && numeroPorquinhos > 0){
+            numeroChecador = 2;
+            isAnimalEmpty = false;
         }
         for (int i = 0; i < tamTabuleiro; i++) {
             if (verificaCasa(tabuleiro, i, col, numeroChecador)) {
                 tabuleiro[i][col] = 2;
+                if()
                 solve(tabuleiro, col + 1, numeroPorquinhos - 1, numeroGalinhas, solutions, "Galinha");
                 tabuleiro[i][col] = 0;
             }
