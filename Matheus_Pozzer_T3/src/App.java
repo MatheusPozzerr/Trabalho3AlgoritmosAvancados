@@ -5,6 +5,8 @@ public class App {
         int galinhas = Integer.parseInt(args[2]);
         int[][] matriz = new int[quantidadeLihas][quantidadeLihas];
 
+
         
+
     }
 }
