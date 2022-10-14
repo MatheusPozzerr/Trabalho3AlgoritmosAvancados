@@ -20,10 +20,23 @@ public class Tabuleiro {
         int[][] tabuleiro = criaTabuleiro();
         List<String> solutions = new ArrayList<>();
 
-        if (!solve(tabuleiro, 0, 0, this.porquinhos, this.galinhas, solutions, "Galinha")) {
-            System.out.print("nenhuma solução encontrada");
+        if (porquinhos == 0 && galinhas == 0) {
+            System.out.println("Nenhum animal inserido");
             return;
         }
+
+        if (galinhas > 0) {
+            if (!solve(tabuleiro, 0, 0, 0, 0, this.porquinhos, this.galinhas, solutions, "Galinha")) {
+                System.out.print("nenhuma solução encontrada");
+                return;
+            }
+        } else {
+            if (!solve(tabuleiro, 0, 0, 0, 0, this.porquinhos, this.galinhas, solutions, "Porquinho")) {
+                System.out.print("nenhuma solução encontrada");
+                return;
+            }
+        }
+
         for (int i = 0; i < solutions.size(); i++) {
             System.out.println("solução: " + i + "\n");
             System.out.println(solutions.get(i));
@@ -41,49 +54,64 @@ public class Tabuleiro {
         return tabuleiro;
     }
 
-    private boolean solve(int[][] tabuleiro, int colPorquinho, int colGalinha,
+    private boolean solve(int[][] tabuleiro, int linhaPorquinho, int colunaPorquinho, int linhaGalinha,
+            int colunaGalinha,
             int numeroPorquinhos, int numeroGalinhas, List<String> solutions,
             String animalType) {
         if (numeroGalinhas == 0 && numeroPorquinhos == 0) {
-        solutions.add(printSolution(tabuleiro));
-        return true;
+            solutions.add(printSolution(tabuleiro));
+            return true;
         }
-        boolean isAnimalEmpty = true;
-        int col = 0;
-        
-        if(animalType.equals("Porquinho") && numeroPorquinhos > 0){
-            col = colPorquinho;
-        }
-        else if (animalType.equals("Galinha") && numeroGalinhas > 0){
-            col = colGalinha;
-        }
-        else if (animalType.equals("Galinha") && numeroGalinhas == 0) {
-            animalType = "Porquinho";
-            col = colPorquinho;
-        }
-        else if (animalType.equals("Porquinho") && numeroPorquinhos == 0) {
-            animalType = "Galinha";
-            col = colGalinha;
+        int linha = 0;
+        int coluna = 0;
+        int numeroChecador = 0;
+        if (animalType.equals("Porquinho") && numeroPorquinhos > 0) {
+            coluna = colunaPorquinho;
+            linha = linhaPorquinho;
+        } else if (animalType.equals("Galinha") && numeroGalinhas > 0) {
+            linha = linhaGalinha;
+            coluna = colunaGalinha;
         }
 
-        for (int i = 0; i < tamTabuleiro; i++) {
-            for (int j = col; j < tamTabuleiro; j++){ 
-            if (animalType.equals("Galinha")) {
-                if (verificaCasa(tabuleiro, i, col, animalType)) {
-                    tabuleiro[i][col] = 2;
-                    solve(tabuleiro,colPorquinho, colGalinha + 1, numeroGalinhas - 1, numeroGalinhas, solutions, "Galinha");
-                    tabuleiro[i][col] = 0;
+        if (animalType.equals("Porquinho")) {
+            for (int i = linha; i < tamTabuleiro; i++) {
+                for (int j = coluna; j < tamTabuleiro; j++) {
+                    if (verificaCasa(tabuleiro, i, j,animalType)) {
+                        tabuleiro[i][j] = 2;
+                        if (numeroGalinhas > 0) {
+                            solve(tabuleiro, i, j, linhaGalinha, colunaGalinha, numeroPorquinhos - 1, numeroGalinhas,
+                                    solutions, "Galinha");
+                        } else {
+                            solve(tabuleiro, i, j, linhaGalinha, colunaGalinha, numeroPorquinhos - 1, numeroGalinhas,
+                                    solutions, "Porquinho");
+                        }
+                        tabuleiro[i][j] = 0;
+                    }
                 }
             }
-            }
-            if (animalType.equals("Porquinho")) {
-
+        } else {
+            for (int i = linha; i < tamTabuleiro; i++) {
+                for (int j = coluna; j < tamTabuleiro; j++) {
+                    if (verificaCasa(tabuleiro, i, j, animalType)) {
+                        tabuleiro[i][j] = 1;
+                        if (numeroGalinhas > 0) {
+                            solve(tabuleiro, linhaPorquinho, colunaPorquinho, i, j, numeroPorquinhos,
+                                    numeroGalinhas - 1,
+                                    solutions, "Porquinho");
+                        } else {
+                            solve(tabuleiro, linhaPorquinho, colunaPorquinho, i, j, numeroPorquinhos,
+                                    numeroGalinhas - 1,
+                                    solutions, "Galinha");
+                        }
+                        tabuleiro[i][j] = 0;
+                    }
+                }
             }
         }
         return solutions.size() > 0;
     }
 
-    private boolean verificaCasa(int[][] tabuleiro, int linha, int col, String tipoAnimal) {
+    private boolean verificaCasa(int[][] tabuleiro, int linha, int col ,String tipoAnimal) {
         int numeroChecar = 0;
         if (tipoAnimal.equals("Galinha")) {
             numeroChecar = 1;
@@ -116,7 +144,7 @@ public class Tabuleiro {
             if (tabuleiro[i][j] == numeroChecar)
                 return false;
 
-        for (i = linha, j = col; j < tamTabuleiro && i <= 0; i--, j++)
+        for (i = linha, j = col; j < tamTabuleiro && i >= 0; i--, j++)
             if (tabuleiro[i][j] == numeroChecar)
                 return false;
 
