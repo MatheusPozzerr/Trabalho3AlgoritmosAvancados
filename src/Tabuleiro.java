@@ -114,21 +114,21 @@ public class Tabuleiro {
     private boolean verificaCasa(int[][] tabuleiro, int linha, int col ,String tipoAnimal) {
         int numeroChecar = 0;
         if (tipoAnimal.equals("Galinha")) {
-            numeroChecar = 1;
+            numeroChecar = 2;
         }
         if (tipoAnimal.equals("Porquinho")) {
-            numeroChecar = 2;
+            numeroChecar = 1;
         }
         int i, j;
 
         if (tabuleiro[linha][col] != 0)
             return false;
 
-        for (i = 0; i < col; i++)
+        for (i = 0; i < tamTabuleiro; i++)
             if (tabuleiro[linha][i] == numeroChecar)
                 return false;
 
-        for (i = 0; i < col; i++)
+        for (i = 0; i < tamTabuleiro; i++)
             if (tabuleiro[i][col] == numeroChecar)
                 return false;
 
