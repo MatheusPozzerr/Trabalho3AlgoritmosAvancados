@@ -5,6 +5,6 @@ public class App {
         int galinhas = Integer.parseInt(args[2]);
 
         Tabuleiro tabuleiro = new Tabuleiro(porquinhos, galinhas, quantidadeLinhas);
-        tabuleiro.solve();
+        tabuleiro.jogar();
     }
 }

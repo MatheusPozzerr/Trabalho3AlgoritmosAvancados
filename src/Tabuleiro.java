@@ -15,7 +15,7 @@ public class Tabuleiro {
         this.tamTabuleiro = tamTabuleiro;
     }
 
-    public void solve() {
+    public void jogar() {
 
         int[][] tabuleiro = criaTabuleiro();
         List<String> solutions = new ArrayList<>();
@@ -26,12 +26,12 @@ public class Tabuleiro {
         }
 
         if (galinhas > 0) {
-            if (!solve(tabuleiro, 0, 0, 0, 0, this.porquinhos, this.galinhas, solutions, "Galinha")) {
+            if (!resolve(tabuleiro, 0, 0, 0, 0, this.porquinhos, this.galinhas, solutions, "Galinha")) {
                 System.out.print("nenhuma solução encontrada");
                 return;
             }
         } else {
-            if (!solve(tabuleiro, 0, 0, 0, 0, this.porquinhos, this.galinhas, solutions, "Porquinho")) {
+            if (!resolve(tabuleiro, 0, 0, 0, 0, this.porquinhos, this.galinhas, solutions, "Porquinho")) {
                 System.out.print("nenhuma solução encontrada");
                 return;
             }
@@ -54,12 +54,12 @@ public class Tabuleiro {
         return tabuleiro;
     }
 
-    private boolean solve(int[][] tabuleiro, int linhaPorquinho, int colunaPorquinho, int linhaGalinha,
+    private boolean resolve(int[][] tabuleiro, int linhaPorquinho, int colunaPorquinho, int linhaGalinha,
             int colunaGalinha,
             int numeroPorquinhos, int numeroGalinhas, List<String> solutions,
             String animalType) {
         if (numeroGalinhas == 0 && numeroPorquinhos == 0) {
-            solutions.add(printSolution(tabuleiro));
+            solutions.add(printaSolucao(tabuleiro));
             return true;
         }
         int linha = 0;
@@ -79,10 +79,10 @@ public class Tabuleiro {
                     if (verificaCasa(tabuleiro, i, j,animalType)) {
                         tabuleiro[i][j] = 2;
                         if (numeroGalinhas > 0) {
-                            solve(tabuleiro, i, j, linhaGalinha, colunaGalinha, numeroPorquinhos - 1, numeroGalinhas,
+                            resolve(tabuleiro, i, j, linhaGalinha, colunaGalinha, numeroPorquinhos - 1, numeroGalinhas,
                                     solutions, "Galinha");
                         } else {
-                            solve(tabuleiro, i, j, linhaGalinha, colunaGalinha, numeroPorquinhos - 1, numeroGalinhas,
+                            resolve(tabuleiro, i, j, linhaGalinha, colunaGalinha, numeroPorquinhos - 1, numeroGalinhas,
                                     solutions, "Porquinho");
                         }
                         tabuleiro[i][j] = 0;
@@ -95,11 +95,11 @@ public class Tabuleiro {
                     if (verificaCasa(tabuleiro, i, j, animalType)) {
                         tabuleiro[i][j] = 1;
                         if (numeroGalinhas > 0) {
-                            solve(tabuleiro, linhaPorquinho, colunaPorquinho, i, j, numeroPorquinhos,
+                            resolve(tabuleiro, linhaPorquinho, colunaPorquinho, i, j, numeroPorquinhos,
                                     numeroGalinhas - 1,
                                     solutions, "Porquinho");
                         } else {
-                            solve(tabuleiro, linhaPorquinho, colunaPorquinho, i, j, numeroPorquinhos,
+                            resolve(tabuleiro, linhaPorquinho, colunaPorquinho, i, j, numeroPorquinhos,
                                     numeroGalinhas - 1,
                                     solutions, "Galinha");
                         }
@@ -151,14 +151,14 @@ public class Tabuleiro {
         return true;
     }
 
-    private String printSolution(int[][] tabuleiro) {
-        StringBuilder msg = new StringBuilder();
+    private String printaSolucao(int[][] tabuleiro) {
+        StringBuilder mensagem = new StringBuilder();
         for (int i = 0; i < tamTabuleiro; i++) {
             for (int j = 0; j < tamTabuleiro; j++)
-                msg.append(" " + tabuleiro[i][j] + " ");
-            msg.append("\n");
+            mensagem.append(" " + tabuleiro[i][j] + " ");
+            mensagem.append("\n");
         }
-        return msg.toString();
+        return mensagem.toString();
     }
 
 }
