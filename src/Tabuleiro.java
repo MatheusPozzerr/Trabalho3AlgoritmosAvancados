@@ -6,8 +6,8 @@ public class Tabuleiro {
     private final int tamTabuleiro;
     private final int porquinhos;
     private final int galinhas;
-    private final int numeroGalinha = 1;
-    private final int numeroPorco = 2;
+    private int numeroSolucoes = 0;
+
     enum AnimalType {GALINHA, PORQUINHO};
 
     public Tabuleiro(int porquinhos, int galinhas, int tamTabuleiro) {
@@ -19,7 +19,7 @@ public class Tabuleiro {
     public void jogar() {
 
         int[][] tabuleiro = criaTabuleiro();
-        List<String> solutions = new ArrayList<>();
+        int solutions = this.numeroSolucoes;
 
         if (porquinhos == 0 && galinhas == 0) {
             System.out.println("Nenhum animal inserido");
@@ -38,11 +38,8 @@ public class Tabuleiro {
             }
         }
 
-        for (int i = 0; i < solutions.size(); i++) {
-            System.out.println("solução: " + i + "\n");
-            System.out.println(solutions.get(i));
-            System.out.println();
-        }
+        System.out.println("Solucoes encontradas: " + this.numeroSolucoes);
+
     }
 
     private int[][] criaTabuleiro() {
@@ -57,10 +54,11 @@ public class Tabuleiro {
 
     private boolean resolve(int[][] tabuleiro, int linhaPorquinho, int colunaPorquinho, int linhaGalinha,
             int colunaGalinha,
-            int numeroPorquinhos, int numeroGalinhas, List<String> solutions,
+            int numeroPorquinhos, int numeroGalinhas, int solutions,
             AnimalType animalType) {
         if (numeroGalinhas == 0 && numeroPorquinhos == 0) {
-            solutions.add(printaSolucao(tabuleiro));
+            this.numeroSolucoes++;
+            solutions++;
             return true;
         }
         int linha = 0;
@@ -108,7 +106,7 @@ public class Tabuleiro {
                 }
             }
         }
-        return solutions.size() > 0;
+        return this.numeroSolucoes > 0;
     }
 
     private boolean verificaCasa(int[][] tabuleiro, int linha, int col ,AnimalType tipoAnimal) {
@@ -151,14 +149,14 @@ public class Tabuleiro {
         return true;
     }
 
-    private String printaSolucao(int[][] tabuleiro) {
-        StringBuilder mensagem = new StringBuilder();
-        for (int i = 0; i < tamTabuleiro; i++) {
-            for (int j = 0; j < tamTabuleiro; j++)
-            mensagem.append(" " + tabuleiro[i][j] + " ");
-            mensagem.append("\n");
-        }
-        return mensagem.toString();
-    }
+    // private String printaSolucao(int[][] tabuleiro) {
+    //     StringBuilder mensagem = new StringBuilder();
+    //     for (int i = 0; i < tamTabuleiro; i++) {
+    //         for (int j = 0; j < tamTabuleiro; j++)
+    //         mensagem.append(" " + tabuleiro[i][j] + " ");
+    //         mensagem.append("\n");
+    //     }
+    //     return mensagem.toString();
+    // }
 
 }
