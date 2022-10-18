@@ -7,7 +7,10 @@ public class Tabuleiro {
     private final int porquinhos;
     private final int galinhas;
     private int numSolucoes;
-    enum AnimalType {GALINHA, PORQUINHO};
+
+    enum AnimalType {
+        GALINHA, PORQUINHO
+    };
 
     public Tabuleiro(int porquinhos, int galinhas, int tamTabuleiro) {
         this.porquinhos = porquinhos;
@@ -26,12 +29,12 @@ public class Tabuleiro {
 
         if (galinhas > 0) {
             if (!resolve(tabuleiro, 0, 0, 0, 0, this.porquinhos, this.galinhas, AnimalType.GALINHA)) {
-                System.out.print("nenhuma solução encontrada");
+                System.out.print("Numero solucoes: 0");
                 return;
             }
         } else {
             if (!resolve(tabuleiro, 0, 0, 0, 0, this.porquinhos, this.galinhas, AnimalType.PORQUINHO)) {
-                System.out.print("nenhuma solução encontrada");
+                System.out.print("Numero solucoes: 0");
                 return;
             }
         }
@@ -70,7 +73,7 @@ public class Tabuleiro {
         if (animalType == AnimalType.PORQUINHO) {
             for (int i = linha; i < tamTabuleiro; i++) {
                 for (int j = coluna; j < tamTabuleiro; j++) {
-                    if (verificaCasa(tabuleiro, i, j,animalType)) {
+                    if (verificaCasa(tabuleiro, i, j, animalType)) {
                         tabuleiro[i][j] = 2;
                         if (numeroGalinhas > 0) {
                             resolve(tabuleiro, i, j, linhaGalinha, colunaGalinha, numeroPorquinhos - 1, numeroGalinhas,
@@ -107,7 +110,68 @@ public class Tabuleiro {
         return this.numSolucoes > 0;
     }
 
-    private boolean verificaCasa(int[][] tabuleiro, int linha, int col ,AnimalType tipoAnimal) {
+    // private boolean resolve(int[][] tabuleiro, int linhaPorquinho, int
+    // colunaPorquinho, int linhaGalinha,
+    // int colunaGalinha,
+    // int numeroPorquinhos, int numeroGalinhas,
+    // AnimalType animalType) {
+    // if (numeroGalinhas == 0 && numeroPorquinhos == 0) {
+    // this.numSolucoes++;
+    // return true;
+    // }
+    // int linha = 0;
+    // int coluna = 0;
+    // if (animalType == AnimalType.PORQUINHO && numeroPorquinhos > 0) {
+    // coluna = colunaPorquinho;
+    // linha = linhaPorquinho;
+    // } else if (animalType == AnimalType.GALINHA && numeroGalinhas > 0) {
+    // linha = linhaGalinha;
+    // coluna = colunaGalinha;
+    // }
+
+    // if (animalType == AnimalType.PORQUINHO) {
+    // for (int i = linha; i < tamTabuleiro; i++) {
+    // for (int j = coluna; j < tamTabuleiro; j++) {
+    // if (verificaCasa(tabuleiro, i, j,animalType)) {
+    // tabuleiro[i][j] = 2;
+    // if (numeroGalinhas > 0) {
+    // resolve(tabuleiro, i, j, linhaGalinha, colunaGalinha, numeroPorquinhos - 1,
+    // numeroGalinhas,
+    // AnimalType.GALINHA);
+    // } else {
+    // resolve(tabuleiro, i, j, linhaGalinha, colunaGalinha, numeroPorquinhos - 1,
+    // numeroGalinhas,
+    // AnimalType.PORQUINHO);
+    // }
+    // tabuleiro[i][j] = 0;
+    // }
+    // coluna = 0;
+    // }
+    // }
+    // } else {
+    // for (int i = linha; i < tamTabuleiro; i++) {
+    // for (int j = coluna; j < tamTabuleiro; j++) {
+    // if (verificaCasa(tabuleiro, i, j, animalType)) {
+    // tabuleiro[i][j] = 1;
+    // if (numeroPorquinhos > 0) {
+    // resolve(tabuleiro, linhaPorquinho, colunaPorquinho, i, j, numeroPorquinhos,
+    // numeroGalinhas - 1,
+    // AnimalType.PORQUINHO);
+    // } else {
+    // resolve(tabuleiro, linhaPorquinho, colunaPorquinho, i, j, numeroPorquinhos,
+    // numeroGalinhas - 1,
+    // AnimalType.GALINHA);
+    // }
+    // tabuleiro[i][j] = 0;
+    // }
+    // coluna = 0;
+    // }
+    // }
+    // }
+    // return this.numSolucoes > 0;
+    // }
+
+    private boolean verificaCasa(int[][] tabuleiro, int linha, int col, AnimalType tipoAnimal) {
         int numeroChecar = 0;
         if (tipoAnimal == AnimalType.GALINHA) {
             numeroChecar = 2;
@@ -148,13 +212,13 @@ public class Tabuleiro {
     }
 
     // private String printaSolucao(int[][] tabuleiro) {
-    //     StringBuilder mensagem = new StringBuilder();
-    //     for (int i = 0; i < tamTabuleiro; i++) {
-    //         for (int j = 0; j < tamTabuleiro; j++)
-    //         mensagem.append(" " + tabuleiro[i][j] + " ");
-    //         mensagem.append("\n");
-    //     }
-    //     return mensagem.toString();
+    // StringBuilder mensagem = new StringBuilder();
+    // for (int i = 0; i < tamTabuleiro; i++) {
+    // for (int j = 0; j < tamTabuleiro; j++)
+    // mensagem.append(" " + tabuleiro[i][j] + " ");
+    // mensagem.append("\n");
+    // }
+    // return mensagem.toString();
     // }
 
 }
