@@ -27,19 +27,10 @@ public class Tabuleiro {
             return;
         }
 
-            if (galinhas < porquinhos) {
-                if (!resolvePrimeiraClasse(tabuleiro, 0, 0, 0, 0, this.porquinhos, this.galinhas, AnimalType.GALINHA,
-                        false, tabuleiroEspacoLivre)) {
-                    System.out.print("Numero solucoes: 0");
-                    return;
-                }
-            } else {
-                if (!resolvePrimeiraClasse(tabuleiro, 0, 0, 0, 0, this.porquinhos, this.galinhas, AnimalType.PORQUINHO,
-                        false, tabuleiroEspacoLivre)) {
-                    System.out.print("Numero solucoes: 0");
-                    return;
-                }
-            }
+        AnimalType animal = (galinhas < porquinhos) ? AnimalType.GALINHA : AnimalType.PORQUINHO;
+
+            resolvePrimeiraClasse(tabuleiro, 0, 0, 0, 0, this.porquinhos, this.galinhas, animal,
+                        false, tabuleiroEspacoLivre);
 
         System.out.println("Numero solucoes: " + this.numSolucoes);
     }
@@ -116,17 +107,11 @@ public class Tabuleiro {
                     } else {
                         ocupaEspaco(tabuleiroEspacoLivre, i, j);
                         tabuleiro[i][j] = 2;
-                        if (j < tamTabuleiro) {
                             resolvePrimeiraClasse(tabuleiro, i, j + 1, linhaGalinha, colunaGalinha,
                                     numeroPorquinhos - 1,
                                     numeroGalinhas,
                                     AnimalType.PORQUINHO, false, tabuleiroEspacoLivre);
-                        } else {
-                            resolvePrimeiraClasse(tabuleiro, i + 1, j, linhaGalinha, colunaGalinha,
-                                    numeroPorquinhos - 1,
-                                    numeroGalinhas,
-                                    AnimalType.PORQUINHO, false, tabuleiroEspacoLivre);
-                        }
+                       
                         desocupaEspacosBloqueados(tabuleiroEspacoLivre, i, j);
                         tabuleiro[i][j] = 0;
                     }
