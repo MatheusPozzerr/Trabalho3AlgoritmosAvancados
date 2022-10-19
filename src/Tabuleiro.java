@@ -1,6 +1,3 @@
-import java.util.ArrayList;
-import java.util.List;
-
 public class Tabuleiro {
 
     private final int tamTabuleiro;
@@ -23,21 +20,22 @@ public class Tabuleiro {
         int[][] tabuleiro = criaTabuleiro();
         int[][] tabuleiroEspacosDisponiveis = criaTabuleiro();
         int espacosLivres = tamTabuleiro * tamTabuleiro;
-        TabuleiroEspacoLivre tabuleiroEspacoLivre = new TabuleiroEspacoLivre(tabuleiroEspacosDisponiveis, espacosLivres);
+        TabuleiroEspacoLivre tabuleiroEspacoLivre = new TabuleiroEspacoLivre(tabuleiroEspacosDisponiveis,
+                espacosLivres);
         if (porquinhos == 0 && galinhas == 0) {
-            System.out.println("Nenhum animal inserido");
+            System.out.println("Numero Solucoes: 0");
             return;
         }
 
-        if (galinhas > porquinhos) {
+        if (galinhas < porquinhos) {
             if (!resolvePrimeiraClasse(tabuleiro, 0, 0, 0, 0, this.porquinhos, this.galinhas, AnimalType.GALINHA,
-                    false)) {
+                    false, tabuleiroEspacoLivre)) {
                 System.out.print("Numero solucoes: 0");
                 return;
             }
         } else {
             if (!resolvePrimeiraClasse(tabuleiro, 0, 0, 0, 0, this.porquinhos, this.galinhas, AnimalType.PORQUINHO,
-                    false)) {
+                    false, tabuleiroEspacoLivre)) {
                 System.out.print("Numero solucoes: 0");
                 return;
             }
@@ -73,12 +71,13 @@ public class Tabuleiro {
     private boolean resolvePrimeiraClasse(int[][] tabuleiro, int linhaPorquinho, int colunaPorquinho, int linhaGalinha,
             int colunaGalinha,
             int numeroPorquinhos, int numeroGalinhas,
-            AnimalType animalType, boolean isEmpty) {
+            AnimalType animalType, boolean isEmpty, TabuleiroEspacoLivre tabuleiroEspacoLivre) {
         if (numeroGalinhas == 0 && numeroPorquinhos == 0) {
             this.numSolucoes++;
-            boardPrinter(tabuleiro);
+            //boardPrinter(tabuleiro);
             return true;
         }
+        boardPrinter(tabuleiroEspacoLivre.tabuleiroOcupacao);
         int linha = 0;
         int coluna = 0;
         if (animalType == AnimalType.PORQUINHO) {
@@ -88,6 +87,19 @@ public class Tabuleiro {
             linha = linhaGalinha;
             coluna = colunaGalinha;
         }
+        if (animalType == AnimalType.PORQUINHO && numeroPorquinhos == 0) {
+            isEmpty = true;
+            animalType = AnimalType.GALINHA;
+            linha = linhaGalinha;
+            coluna = colunaGalinha;
+        }
+        if (animalType == AnimalType.GALINHA && numeroGalinhas == 0) {
+            isEmpty = true;
+            animalType = AnimalType.PORQUINHO;
+            linha = linhaPorquinho;
+            coluna = colunaPorquinho;
+        }
+
         if (animalType == AnimalType.PORQUINHO) {
             for (int i = linha; i < tamTabuleiro; i++) {
                 for (int j = coluna; j < tamTabuleiro; j++) {
@@ -98,30 +110,25 @@ public class Tabuleiro {
                                 resolvePrimeiraClasse(tabuleiro, i, j, linhaGalinha, colunaGalinha,
                                         numeroPorquinhos - 1,
                                         numeroGalinhas,
-                                        AnimalType.PORQUINHO, true);
+                                        AnimalType.PORQUINHO, true, tabuleiroEspacoLivre);
                             }
                             tabuleiro[i][j] = 0;
                         }
                     } else {
-                        if (numeroPorquinhos > 0) {
-                            tabuleiro[i][j] = 2;
-                            if (j < tamTabuleiro - 1) {
-                                resolvePrimeiraClasse(tabuleiro, i, j + 1, linhaGalinha, colunaGalinha,
-                                        numeroPorquinhos - 1,
-                                        numeroGalinhas,
-                                        AnimalType.PORQUINHO, false);
-                            } else {
-                                resolvePrimeiraClasse(tabuleiro, i + 1, j, linhaGalinha, colunaGalinha,
-                                        numeroPorquinhos - 1,
-                                        numeroGalinhas,
-                                        AnimalType.PORQUINHO, false);
-                            }
-                        } else {
-                            resolvePrimeiraClasse(tabuleiro, i, j, linhaGalinha, colunaGalinha,
-                                    numeroPorquinhos,
+                        ocupaEspaco(tabuleiroEspacoLivre, i, j);
+                        tabuleiro[i][j] = 2;
+                        if (j < tamTabuleiro) {
+                            resolvePrimeiraClasse(tabuleiro, i, j + 1, linhaGalinha, colunaGalinha,
+                                    numeroPorquinhos - 1,
                                     numeroGalinhas,
-                                    AnimalType.GALINHA, true);
+                                    AnimalType.PORQUINHO, false, tabuleiroEspacoLivre);
+                        } else {
+                            resolvePrimeiraClasse(tabuleiro, i + 1, j, linhaGalinha, colunaGalinha,
+                                    numeroPorquinhos - 1,
+                                    numeroGalinhas,
+                                    AnimalType.PORQUINHO, false, tabuleiroEspacoLivre);
                         }
+                        desocupaEspacosBloqueados(tabuleiroEspacoLivre, i, j);
                         tabuleiro[i][j] = 0;
                     }
                 }
@@ -137,30 +144,25 @@ public class Tabuleiro {
                                 resolvePrimeiraClasse(tabuleiro, linhaPorquinho, colunaPorquinho, i, j,
                                         numeroPorquinhos,
                                         numeroGalinhas - 1,
-                                        AnimalType.GALINHA, true);
+                                        AnimalType.GALINHA, true, tabuleiroEspacoLivre);
                             }
                             tabuleiro[i][j] = 0;
                         }
                     } else {
-                        if (numeroGalinhas > 0) {
-                            tabuleiro[i][j] = 1;
-                            if (j < tamTabuleiro - 1) {
-                                resolvePrimeiraClasse(tabuleiro, linhaPorquinho, colunaPorquinho, i, j + 1,
-                                        numeroPorquinhos,
-                                        numeroGalinhas - 1,
-                                        AnimalType.GALINHA, false);
-                            } else {
-                                resolvePrimeiraClasse(tabuleiro, linhaPorquinho, colunaPorquinho, i + 1, j,
-                                        numeroPorquinhos,
-                                        numeroGalinhas - 1,
-                                        AnimalType.GALINHA, false);
-                            }
-                        } else {
-                            resolvePrimeiraClasse(tabuleiro, linhaPorquinho, colunaPorquinho, i, j,
+                        ocupaEspaco(tabuleiroEspacoLivre, i, j);
+                        tabuleiro[i][j] = 1;
+                        if (j < tamTabuleiro) {
+                            resolvePrimeiraClasse(tabuleiro, linhaPorquinho, colunaPorquinho, i, j + 1,
                                     numeroPorquinhos,
-                                    numeroGalinhas,
-                                    AnimalType.PORQUINHO, true);
+                                    numeroGalinhas - 1,
+                                    AnimalType.GALINHA, false, tabuleiroEspacoLivre);
+                        } else {
+                            resolvePrimeiraClasse(tabuleiro, linhaPorquinho, colunaPorquinho, i + 1, j,
+                                    numeroPorquinhos,
+                                    numeroGalinhas - 1,
+                                    AnimalType.GALINHA, false, tabuleiroEspacoLivre);
                         }
+                        desocupaEspacosBloqueados(tabuleiroEspacoLivre, i, j);
                         tabuleiro[i][j] = 0;
                     }
                 }
@@ -270,7 +272,55 @@ public class Tabuleiro {
         return true;
     }
 
-    private TabuleiroEspacoLivre tabuleiroOcupacao(TabuleiroEspacoLivre tabuleiroEspacos, int linha, int col) {
+    private TabuleiroEspacoLivre desocupaEspacosBloqueados(TabuleiroEspacoLivre tabuleiroEspacos, int linha, int col) {
+        int[][] tabuleiro = tabuleiroEspacos.tabuleiroOcupacao;
+
+        for (int i = 0; i < tamTabuleiro; i++) {
+            tabuleiro[linha][i] = tabuleiro[linha][i] - 1;
+            if (tabuleiro[linha][i] == 0) {
+                tabuleiroEspacos.espacosLivres++;
+            }
+        }
+
+        for (int i = 0; i < tamTabuleiro; i++) {
+            tabuleiro[i][col] = tabuleiro[i][col] - 1;
+            if (tabuleiro[i][col] == 0) {
+                tabuleiroEspacos.espacosLivres++;
+            }
+        }
+
+        for (int i = linha, j = col; i >= 0 && j >= 0; i--, j--) {
+            tabuleiro[i][j] = tabuleiro[i][j] - 1;
+            if (tabuleiro[i][j] == 0) {
+                tabuleiroEspacos.espacosLivres++;
+            }
+        }
+
+        for (int i = linha, j = col; j >= 0 && i < tamTabuleiro; i++, j--) {
+            tabuleiro[i][j] = tabuleiro[i][j] - 1;
+            if (tabuleiro[i][j] == 0) {
+                tabuleiroEspacos.espacosLivres++;
+            }
+        }
+
+        for (int i = linha, j = col; i < tamTabuleiro && j < tamTabuleiro; i++, j++) {
+            tabuleiro[i][j] = tabuleiro[i][j] - 1;
+            if (tabuleiro[i][j] == 0) {
+                tabuleiroEspacos.espacosLivres++;
+            }
+        }
+
+        for (int i = linha, j = col; j < tamTabuleiro && i >= 0; i--, j++) {
+            tabuleiro[i][j] = tabuleiro[i][j] - 1;
+            if (tabuleiro[i][j] == 0) {
+                tabuleiroEspacos.espacosLivres++;
+            }
+        }
+
+        return new TabuleiroEspacoLivre(tabuleiro, tabuleiroEspacos.espacosLivres);
+    }
+
+    private TabuleiroEspacoLivre ocupaEspaco(TabuleiroEspacoLivre tabuleiroEspacos, int linha, int col) {
         int[][] tabuleiro = tabuleiroEspacos.tabuleiroOcupacao;
 
         for (int i = 0; i < tamTabuleiro; i++) {
@@ -321,12 +371,7 @@ public class Tabuleiro {
     public static void boardPrinter(int[][] board) {
         for (int i = 0; i < board.length; i++) {
             for (int j = 0; j < board[0].length; j++) {
-                if (board[i][j] == 2)
-                    System.out.print("P" + "  ");
-                if (board[i][j] == 1)
-                    System.out.print("G" + "  ");
-                if (board[i][j] == 0)
-                    System.out.print("." + "  ");
+                    System.out.print(board[i][j] + " . ");
             }
             System.out.println("  ");
         }
